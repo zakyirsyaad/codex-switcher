@@ -5,27 +5,59 @@
 <h1 align="center">Codex Switcher</h1>
 
 <p align="center">
-  A Desktop Application for Managing Multiple OpenAI <a href="https://github.com/openai/codex">Codex CLI</a> Accounts<br>
+  A Desktop Application for Managing Multiple OpenAI <a href="https://github.com/openai/codex">Codex</a> Accounts<br>
   Easily switch between accounts, monitor usage limits, and stay in control of your quota
 </p>
 
 ## Features
 
-- **Multi-Account Management** – Add and manage multiple Codex accounts in one place
-- **Quick Switching** – Switch between accounts with a single click
-- **System Tray Switching** – Switch accounts directly from the menu bar or system tray
-- **Usage Monitoring** – View real-time usage for both 5-hour and weekly limits
-- **Dual Login Mode** – OAuth authentication or import existing `auth.json` files
+- **Multi-Account Management** – Add, rename, mask, import, export, and manage multiple Codex accounts in one place
+- **Quick Switching** – Switch between accounts from the main window, native tray menu, or tray popup
+- **Automatic Warm-Up** – Warm up one account or all accounts manually, or keep accounts fresh with automatic warm-up scheduling
+- **System Tray Controls** – Use the tray popup to switch accounts, inspect quota, refresh usage, open the main window, or quit the app
+- **Tray Display Modes** – Choose between the app icon with session percentage or a text-only hourly/weekly percentage display
+- **Usage Monitoring** – View real-time 5-hour session and weekly usage, reset timing, credits, and subscription expiry
+- **Blocked Switch Recovery** – Detect running Codex sessions and offer a force-close flow before retrying the account switch
+- **Dual Login Mode** – Authenticate with ChatGPT OAuth or import existing `auth.json` files
 
 ## Installation
 
-### Prerequisites
+### Download a Release
+
+The easiest way to install Codex Switcher is from the latest GitHub release:
+
+[Download the latest release](https://github.com/Lampese/codex-switcher/releases/latest)
+
+Choose the file for your platform:
+
+- **macOS Apple Silicon:** `Codex.Switcher_*_aarch64.dmg`
+- **macOS Intel:** `Codex.Switcher_*_x64.dmg`
+- **Windows:** `Codex.Switcher_*_x64-setup.exe` or `Codex.Switcher_*_x64_en-US.msi`
+- **Linux Debian/Ubuntu:** `Codex.Switcher_*_amd64.deb`
+- **Linux AppImage:** `Codex.Switcher_*_amd64.AppImage`
+- **Linux RPM:** `Codex.Switcher-*-1.x86_64.rpm`
+
+> **macOS:** current release builds are not Apple-notarized. If macOS says the
+> app is damaged, move it to `/Applications` and remove the quarantine flag:
+>
+> ```bash
+> sudo xattr -dr com.apple.quarantine "/Applications/Codex Switcher.app"
+> open "/Applications/Codex Switcher.app"
+> ```
+
+### Auto Updates
+
+Codex Switcher checks the latest GitHub release on startup. When a newer signed
+update package is available, the app shows an update prompt and can install it
+from inside the app.
+
+### Build from Source
+
+#### Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18+)
 - [pnpm](https://pnpm.io/)
 - [Rust](https://rustup.rs/)
-
-### Build from Source
 
 ```bash
 # Clone the repository
