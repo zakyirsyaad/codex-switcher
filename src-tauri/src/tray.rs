@@ -61,7 +61,7 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
         .menu(&menu)
         .on_menu_event(handle_menu_event);
 
-    #[cfg(not(target_os = "linux"))]
+    #[cfg(target_os = "macos")]
     let builder = builder.icon_as_template(true);
 
     #[cfg(not(target_os = "linux"))]
@@ -299,8 +299,11 @@ fn refresh_tray_display<R: Runtime>(
                 if let Err(error) = tray.set_icon(Some(TRAY_ICON)) {
                     eprintln!("Failed to refresh tray icon: {error}");
                 }
-                if let Err(error) = tray.set_icon_as_template(true) {
-                    eprintln!("Failed to refresh tray icon template mode: {error}");
+                #[cfg(target_os = "macos")]
+                {
+                    if let Err(error) = tray.set_icon_as_template(true) {
+                        eprintln!("Failed to refresh tray icon template mode: {error}");
+                    }
                 }
             }
             if let Err(error) = tray.set_title(title) {
@@ -311,9 +314,13 @@ fn refresh_tray_display<R: Runtime>(
             if let Err(error) = tray.set_visible(true) {
                 eprintln!("Failed to show tray icon: {error}");
             }
-            #[cfg(not(target_os = "linux"))]
+            #[cfg(target_os = "macos")]
             if let Err(error) = tray.set_icon(None) {
                 eprintln!("Failed to hide tray icon: {error}");
+            }
+            #[cfg(target_os = "windows")]
+            if let Err(error) = tray.set_icon(Some(TRAY_ICON)) {
+                eprintln!("Failed to refresh tray icon: {error}");
             }
             if let Err(error) = tray.set_title(title) {
                 eprintln!("Failed to refresh tray title: {error}");
