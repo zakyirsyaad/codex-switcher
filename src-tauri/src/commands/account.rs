@@ -125,6 +125,32 @@ pub async fn add_account_from_auth_json_text(
     Ok(AccountInfo::from_stored(&stored, active_id))
 }
 
+/// Add an account from a CODEX_ACCESS_TOKEN value.
+#[tauri::command]
+pub async fn add_account_from_access_token(
+    name: String,
+    access_token: String,
+) -> Result<AccountInfo, String> {
+    let trimmed_name = name.trim();
+    if trimmed_name.is_empty() {
+        return Err("Account name is required".to_string());
+    }
+
+    let trimmed_token = access_token.trim();
+    if trimmed_token.is_empty() {
+        return Err("Access token is required".to_string());
+    }
+
+    let account =
+        StoredAccount::new_codex_access_token(trimmed_name.to_string(), trimmed_token.to_string());
+    let stored = add_account(account).map_err(|e| e.to_string())?;
+
+    let store = load_accounts().map_err(|e| e.to_string())?;
+    let active_id = store.active_account_id.as_deref();
+
+    Ok(AccountInfo::from_stored(&stored, active_id))
+}
+
 /// Switch to a different account
 #[tauri::command]
 pub async fn switch_account(account_id: String) -> Result<(), String> {
@@ -349,20 +375,23 @@ fn encode_slim_payload_from_store(store: &AccountsStore) -> anyhow::Result<Strin
         .accounts
         .iter()
         .map(|account| match &account.auth_data {
-            AuthData::ApiKey { key } => SlimAccountPayload {
+            AuthData::ApiKey { key } => Ok(SlimAccountPayload {
                 name: account.name.clone(),
                 auth_type: SLIM_AUTH_API_KEY,
                 api_key: Some(key.clone()),
                 refresh_token: None,
-            },
-            AuthData::ChatGPT { refresh_token, .. } => SlimAccountPayload {
+            }),
+            AuthData::ChatGPT { refresh_token, .. } => Ok(SlimAccountPayload {
                 name: account.name.clone(),
                 auth_type: SLIM_AUTH_CHATGPT,
                 api_key: None,
                 refresh_token: Some(refresh_token.clone()),
-            },
+            }),
+            AuthData::CodexAccessToken { .. } => anyhow::bail!(
+                "Slim export does not support CODEX_ACCESS_TOKEN accounts. Use full encrypted export instead."
+            ),
         })
-        .collect();
+        .collect::<anyhow::Result<Vec<_>>>()?;
 
     let payload = SlimPayload {
         version: SLIM_FORMAT_VERSION,

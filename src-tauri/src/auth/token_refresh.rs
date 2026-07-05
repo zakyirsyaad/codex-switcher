@@ -25,7 +25,7 @@ struct RefreshTokenResponse {
 /// Returns an updated account when a refresh was performed.
 pub async fn ensure_chatgpt_tokens_fresh(account: &StoredAccount) -> Result<StoredAccount> {
     match &account.auth_data {
-        AuthData::ApiKey { .. } => Ok(account.clone()),
+        AuthData::ApiKey { .. } | AuthData::CodexAccessToken { .. } => Ok(account.clone()),
         AuthData::ChatGPT { access_token, .. } => {
             if token_expired_or_near_expiry(access_token) {
                 println!(
@@ -43,7 +43,7 @@ pub async fn ensure_chatgpt_tokens_fresh(account: &StoredAccount) -> Result<Stor
 /// Force-refresh ChatGPT OAuth tokens for an account.
 pub async fn refresh_chatgpt_tokens(account: &StoredAccount) -> Result<StoredAccount> {
     let (current_id_token, current_refresh_token, current_account_id) = match &account.auth_data {
-        AuthData::ApiKey { .. } => return Ok(account.clone()),
+        AuthData::ApiKey { .. } | AuthData::CodexAccessToken { .. } => return Ok(account.clone()),
         AuthData::ChatGPT {
             id_token,
             refresh_token,

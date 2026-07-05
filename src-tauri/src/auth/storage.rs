@@ -270,8 +270,8 @@ pub fn update_account_chatgpt_tokens(
                 *stored_account_id = Some(new_account_id);
             }
         }
-        AuthData::ApiKey { .. } => {
-            anyhow::bail!("Cannot update OAuth tokens for an API key account");
+        AuthData::ApiKey { .. } | AuthData::CodexAccessToken { .. } => {
+            anyhow::bail!("Cannot update OAuth tokens for this account type");
         }
     }
 

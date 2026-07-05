@@ -164,6 +164,7 @@ function App() {
     deleteAccount,
     renameAccount,
     importFromFile,
+    addFromAccessToken,
     exportAccountsSlimText,
     importAccountsSlimText,
     startOAuthLogin,
@@ -1825,6 +1826,7 @@ function App() {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onImportFile={importFromFile}
+        onAddAccessToken={addFromAccessToken}
         onStartOAuth={startOAuthLogin}
         onCompleteOAuth={completeOAuthLogin}
         onCancelOAuth={cancelOAuthLogin}
